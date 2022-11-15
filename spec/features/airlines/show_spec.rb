@@ -38,7 +38,7 @@ require 'rails_helper'
 
           expect(page).to have_content("#{@sam.name}")
           expect(page).to have_content("#{@bo.name}")
-      
+          save_and_open_page
 
           visit airline_path(@spirit.id)
           expect(page).to have_content("#{@tony.name}")

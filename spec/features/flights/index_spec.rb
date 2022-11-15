@@ -48,7 +48,7 @@ RSpec.describe "Flight Index Page" do
           expect(page).to have_content("#{@tony.name}")
           expect(page).to have_content("#{@ben.name}")
           expect(page).to have_content("#{@f1002.number}")
-          
+          save_and_open_page
           within("#flight-list-#{@f1838.id}") do  
             expect(page).to have_content("#{@f1838.number}")
             expect(page).to have_content("#{@f1838.airline.name}")
