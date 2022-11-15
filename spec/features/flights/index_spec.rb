@@ -1,6 +1,7 @@
 require 'rails_helper'
+
 RSpec.describe "Flight Index Page" do
- before(:each) do
+  before(:each) do
     @frontier = Airline.create!(name: "Frontier")
     @spirit = Airline.create!(name: "Spirit")
     @delta = Airline.create!(name: "Delta")
@@ -24,7 +25,7 @@ RSpec.describe "Flight Index Page" do
     @sam = Passenger.create!(name: "Sam", age: 17)
     @bo = Passenger.create!(name: "Bo", age: 37)
     @tony = Passenger.create!(name: "Tony", age: 27)
-    @ben = Passenger.create!(name: "Sam", age: 55)
+    @ben = Passenger.create!(name: "Ben", age: 55)
 
     @combo1 = FlightPassenger.create!(flight: @f1727, passenger: @kait)
     @combo2 = FlightPassenger.create!(flight: @f1727, passenger: @joe )
@@ -39,43 +40,54 @@ RSpec.describe "Flight Index Page" do
     @combo3 = FlightPassenger.create!(flight: @f1838, passenger: @sam)
  end
 
-describe "User Story 1, Flights Index Page" do
-  describe "I see a list of all flight numbers" do
-    describe "And next to each flight number I see the name of the Airline of that flight" do
-      it "And under each flight number I see the names of all that flight's passengers " do
-        visit flights_path
-        expect(page).to have_content("#{@tony.name}")
-
-        within("#flight-list-#{@f1727.id}") do        
-          expect(page).to have_content("#{@f1727.number}")
-          expect(page).to have_content("#{@f1727.airline.name}")
-          expect(page).to have_content("#{@kait.name}")
-          expect(page).to have_content("#{@joe.name}")
-          expect(page).to have_content("#{@sam.name}")
-          expect(page).to have_content("#{@bo.name}")
+  describe "User Story 1, Flights Index Page" do
+    describe "I see a list of all flight numbers" do
+      describe "And next to each flight number I see the name of the Airline of that flight" do
+        it "And under each flight number I see the names of all that flight's passengers " do
+          visit flights_path
+          expect(page).to have_content("#{@tony.name}")
+          expect(page).to have_content("#{@ben.name}")
+          expect(page).to have_content("#{@f1002.number}")
           
-      end
-    end
-
-    it "allows for passengers to be removed from flight" do
-      visit flights_path
-      expect(page).to have_content("#{@sam.name}")
-        within("#flight-list-#{@f1727.id}") do
-            within("#passengers-list-#{@sam.id}") do
+          within("#flight-list-#{@f1838.id}") do  
+            expect(page).to have_content("#{@f1838.number}")
+            expect(page).to have_content("#{@f1838.airline.name}")
             expect(page).to have_content("#{@sam.name}")
-            click_link ('Remove Passenger')
+            expect(page).to_not have_content("#{@kait.name}")
+          end
+
+
+          within("#flight-list-#{@f1727.id}") do        
+            expect(page).to have_content("#{@f1727.number}")
+            expect(page).to have_content("#{@f1727.airline.name}")
+            expect(page).to have_content("#{@kait.name}")
+            expect(page).to have_content("#{@joe.name}")
+            expect(page).to have_content("#{@sam.name}")
+            expect(page).to have_content("#{@bo.name}")
+            expect(page).to_not have_content("#{@tony.name}")
+            expect(page).to_not have_content("#{@ben.name}")
           end
         end
 
-        expect(current_path).to eq(flights_path)
-        expect(page).to have_content("#{@sam.name}")
+        it "allows for passengers to be removed from flight" do
+          visit flights_path
+          expect(page).to have_content("#{@sam.name}")
+          
+          within("#flight-list-#{@f1727.id}") do
+            within("#passengers-list-#{@sam.id}") do
+              expect(page).to have_content("#{@sam.name}")
+              click_link ('Remove Passenger')
+            end
+          end
+
+          expect(current_path).to eq(flights_path)
+          expect(page).to have_content("#{@sam.name}")
+
           within("#flight-list-#{@f1727.id}") do
             expect(page).to_not have_content(@sam.name)
           end
-        end
+        end 
       end
     end
   end
-  
-  
 end

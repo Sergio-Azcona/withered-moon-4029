@@ -1,12 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Airline, type: :model do
-  describe 'relationships' do
-    it {should have_many :flights}
-
-    it { should have_many(:passengers).through(:flights) }
-  end
-
+  RSpec.describe "Airline Show Page" do
   before(:each) do
     @frontier = Airline.create!(name: "Frontier")
     @spirit = Airline.create!(name: "Spirit")
@@ -21,7 +15,7 @@ RSpec.describe Airline, type: :model do
     @sam = Passenger.create!(name: "Sam", age: 18)
     @bo = Passenger.create!(name: "Bo", age: 37)
     @tony = Passenger.create!(name: "Tony", age: 27)
-    @ben = Passenger.create!(name: "Sam", age: 55)
+    @ben = Passenger.create!(name: "Ben", age: 5)
 
 
     @combo1 = FlightPassenger.create!(flight: @f1727, passenger: @kait)
@@ -31,17 +25,27 @@ RSpec.describe Airline, type: :model do
     @combo4 = FlightPassenger.create!(flight: @f1002, passenger: @bo )
     @combo5 = FlightPassenger.create!(flight: @f1002, passenger: @tony)
     @combo6 = FlightPassenger.create!(flight: @f1002, passenger: @ben )
-    @combo7 = FlightPassenger.create!(flight: @f1002, passenger: @kait)
   end
 
-    describe " Airline's Passengers by age" do
-      it "returns passengers who are 18 and older" do
-        expect(@frontier.adult_passengers_only).to eq([@sam, @bo])
-        expect(@frontier.adult_passengers_only).to_not eq([@kait, @joe])
+  describe "User Story 3, airline's show page" do
+    describe "Then I see a list of passengers that have flights on that airline" do
+      describe "And I see that this list is unique (no duplicate passengers)" do
+        it"And I see that this list only includes adult passengers (i.e. 18 years or older)" do
+          visit  airline_path(@frontier.id)
+          expect(page).to_not have_content("#{@tony.name}")
+          expect(page).to_not have_content("#{@kait.name}")
+          expect(page).to_not have_content("#{@joe.name}")
 
-        expect(@spirit.adult_passengers_only).to eq([@bo, @tony, @ben])
-        expect(@spirit.adult_passengers_only).to_not eq([@kait])
+          expect(page).to have_content("#{@sam.name}")
+          expect(page).to have_content("#{@bo.name}")
+      
+
+          visit airline_path(@spirit.id)
+          expect(page).to have_content("#{@tony.name}")
+          expect(page).to have_content("#{@bo.name}")
+          expect(page).to_not have_content("#{@ben.name}")
+        end
       end
     end
-
+  end
 end
